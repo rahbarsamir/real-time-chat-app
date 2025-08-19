@@ -66,16 +66,8 @@ const SideBar = () => {
       {/* usersFiled */}
 
       <div className="overflow-y-scroll mt-10 h-[75%]">
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
-        <User />
+        <User username={"sam"}  />
+        <User username={"anas"} />
       </div>
     </div>
   );

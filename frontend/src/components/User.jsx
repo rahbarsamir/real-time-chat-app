@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const User = () => {
+const User = ({username}) => {
     const [isActive, setIsActive] = useState(true)
 
     const [bgcolor,setbgcolor] = useState(getRandomLightColor())
@@ -11,7 +11,8 @@ const User = () => {
     return `hsl(${h}, ${s}%, ${l}%)`;
   }
   return (
-    <div className="flex cursor-pointer hover:scale-101 mb-5 justify-between items-center gap-2">
+    <div
+     className="flex cursor-pointer hover:scale-101 mb-5 justify-between items-center gap-2">
             <div className="flex items-center gap-3">
               <div 
               style={{backgroundColor:bgcolor}}
@@ -20,7 +21,7 @@ const User = () => {
                 {isActive && <div className="absolute right-0 bottom-2 bg-green-400 w-3 h-3 border-1 border-white rounded-full"></div>}
               </div>
               <div>
-                <h1 className="font-sans font-medium capitalize">Rahbar samir</h1>
+                <h1 className="font-sans font-medium capitalize">{username}</h1>
                 <h1 className="font-sans font-small text-sm text-gray-800">last message</h1>
                 
               </div>
