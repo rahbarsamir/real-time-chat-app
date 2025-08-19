@@ -1,0 +1,11 @@
+.a {
+  /* border-radius: 50px; */
+  background: #ffffff;
+  box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+}
+
+.b {
+  box-shadow: 7px 9px 24px -8px rgba(0,0,0,0.38);
+-webkit-box-shadow: 7px 9px 24px -8px rgba(0,0,0,0.38);
+-moz-box-shadow: 7px 9px 24px -8px rgba(0,0,0,0.38);
+}
