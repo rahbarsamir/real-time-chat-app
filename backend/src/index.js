@@ -1,42 +1,37 @@
-import express,{urlencoded} from "express";
+import express, { urlencoded } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
 import cors from "cors";
-import User from "./model/userModel.js";
-import Message from "./model/MessageModel.js";
+import Message from "./model/messageModel.js";
 import { connectDB } from "./db/connect.js";
+
+// Routes
+import createUserRoute from "./routes/createUser.route.js";
+import getUsernameRoute from "./routes/getusername.route.js";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
+
 app.use(urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
 
+// Connect DB
 connectDB();
 
+// Routes
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to the chat API" });
 });
-app.post("/postuser", (req, res) => {
-  const { username } = req.body;
-  const newUser = new User({ username });
-  newUser.save()
-    .then(user => res.status(201).json(user))
-    .catch(err => res.status(500).json({ error: err.message }));
-})
+app.use("/postuser", createUserRoute);
+app.use("/search", getUsernameRoute);
 
-app.get("/search/:username", async (req, res) => {
-  const users = await User.find({ username: new RegExp(req.params.username, "i") });
-  console.log(users)
-  res.json(users);
-});
-
+// Messages API
 app.post("/messages", async (req, res) => {
   try {
     const { sender, receiver, message } = req.body;
-    console.log(receiver)
     if (!sender || !receiver || !message) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -44,9 +39,7 @@ app.post("/messages", async (req, res) => {
     const newMessage = new Message({ sender, receiver, message });
     await newMessage.save();
 
-    // (Optional) also broadcast via socket
     io.emit("receiveMessage", newMessage);
-
     res.status(201).json(newMessage);
   } catch (error) {
     console.log("Error saving message:", error);
@@ -65,6 +58,7 @@ app.get("/messages/:sender/:receiver", async (req, res) => {
   res.json(messages);
 });
 
+// Socket.IO
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
@@ -72,7 +66,6 @@ io.on("connection", (socket) => {
     const newMessage = new Message({ sender, receiver, message });
     await newMessage.save();
 
-    // Send to specific receiver
     io.emit("receiveMessage", newMessage);
   });
 
@@ -81,4 +74,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => console.log("Server running on http://localhost:3001"));
+server.listen(3001, () =>
+  console.log("Server running on http://localhost:3001")
+);

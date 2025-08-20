@@ -6,7 +6,7 @@ import "../App.css";
 const SideBar = () => {
 
   const [isAllSelected, setIsAllSelected] = useState(true);
-  const [isSearchFocus, setIsSerachFocused] = useState(false);
+  const [isSearchFocus, setIsSearchFocused] = useState(false);
   const searchRef = useRef();
   return (
     <div className="bg-[#FFFFFF] overflow-hidden w-[29%] a h-full rounded-3xl  p-5">
@@ -27,8 +27,8 @@ const SideBar = () => {
             <input
               ref={searchRef}
               type="text"
-              onFocus={()=>setIsSerachFocused(true)}
-              onBlur={()=>setIsSerachFocused(false)}
+              onFocus={()=>setIsSearchFocused(true)}
+              onBlur={()=>setIsSearchFocused(false)}
               placeholder="Search Username"
               className="bg-white rounded-full px-3 focus:py-1 z-5 outline-none w-0  transition-all duration-100 focus:w-40"
             />

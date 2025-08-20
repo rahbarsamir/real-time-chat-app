@@ -7,7 +7,7 @@ const App = () => {
   return (
     <>
       <div className='bg-[#f0f0f0] flex justify-between h-screen p-5'>
-        <SideBar/>
+        {/* <SideBar/> */}
         <MessageDisplay currentUser="sam" chatUser="anas" />
         {/* <MessageDisplay currentUser="anas" chatUser="sam" /> */}
 
