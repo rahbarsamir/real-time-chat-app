@@ -1,12 +1,12 @@
 import { createContext, useContext, useState } from "react";
 
-// Create context
+
 const ChatContext = createContext();
 
-// Provider component
+
 export const ChatProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null); // logged-in sender
-  const [chatUser, setChatUser] = useState(null);       // receiver
+  const [currentUser, setCurrentUser] = useState(null);
+  const [chatUser, setChatUser] = useState(null);
 
   return (
     <ChatContext.Provider
@@ -16,6 +16,4 @@ export const ChatProvider = ({ children }) => {
     </ChatContext.Provider>
   );
 };
-
-// Custom hook for easy access
 export const useChat = () => useContext(ChatContext);
