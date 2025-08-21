@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
+  visitorId: {
+    type: String,
+    required: true,
+    unique: true
+  },
   createdAt : {
     type: Date,
     default: Date.now

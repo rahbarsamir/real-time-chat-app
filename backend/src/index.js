@@ -19,18 +19,57 @@ connectDB();
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to the chat API" });
 });
-app.post("/postuser", (req, res) => {
-  const { username } = req.body;
-  const newUser = new User({ username });
-  newUser.save()
-    .then(user => res.status(201).json(user))
-    .catch(err => res.status(500).json({ error: err.message }));
+
+
+
+
+// create User or login
+app.post("/postuser", async (req, res) => {
+  const { username, visitorId } = req.body;
+  if (!username || !visitorId) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+try {
+    const isExisting = await User.findOne({ username, visitorId });
+
+  if (isExisting) {
+    return res.status(201).json(isExisting );
+  }
+  const isnotAuth=await User.findOne({ username });
+  if (isnotAuth) {
+    return res.status(401).json({ error: "Bro, why you sneakin’ into someone else’s ID? 😂 Just log in with your own... it’s not that hard." });
+  }
+  const isVisitorIdExisting = await User.findOne({ visitorId });
+  if (isVisitorIdExisting) {
+    return res.status(409).json({ error: "Bro, your system’s already registered… don’t act brand new. Just use your username and keep it moving." });
+  }
+
+  const newUser = await User.create({ username, visitorId });
+  res.status(201).json(newUser);
+} catch (error) {
+  console.error("Error creating user:", error);
+  res.status(500).json({ error: "Failed to create user" });
+}
 })
 
-app.get("/search/:username", async (req, res) => {
-  const users = await User.find({ username: new RegExp(req.params.username, "i") });
-  console.log(users)
+
+
+
+
+app.get("/users", async (req, res) => {
+  const users = await User.find();
   res.json(users);
+});
+
+app.get("/search/:username", async (req, res) => {
+
+  try {
+    const users = await User.find({ username: new RegExp(req.params.username, "i") });
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to search users" });
+  }
+  
 });
 
 app.post("/messages", async (req, res) => {
@@ -64,6 +103,25 @@ app.get("/messages/:sender/:receiver", async (req, res) => {
   }).sort({ timestamp: 1 });
   res.json(messages);
 });
+
+// friendlist
+
+app.get('/getFriendlist',async(req,res)=>{
+  const { currentUser } = req.query;
+  if (!currentUser) {
+    return res.status(400).json({ error: "Current user is required" });
+  }
+  try {
+    // const res=message.
+    
+  } catch (error) {
+    
+  }
+
+})
+
+
+
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);

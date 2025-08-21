@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 const ChatContext = createContext();
 
 
-export const ChatProvider = ({ children }) => {
+const ChatProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [chatUser, setChatUser] = useState(null);
 
@@ -16,4 +16,6 @@ export const ChatProvider = ({ children }) => {
     </ChatContext.Provider>
   );
 };
-export const useChat = () => useContext(ChatContext);
+const useChat = () => useContext(ChatContext);
+
+ export { ChatProvider, useChat };
