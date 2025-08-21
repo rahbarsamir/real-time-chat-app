@@ -12,11 +12,12 @@ const SideBar = () => {
   const [isSearchFocus, setIsSearchFocused] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const searchRef = useRef();
-  const { currentUser } = useChat();
+  const { currentUser,isnewMsg } = useChat();
   const [otherUser, setotherUser] = useState([]);
   const [searchUsers, setSearchUsers] = useState([]);
   useEffect(() => {
     if (currentUser !== null) {
+      console.log("new msg come");
       setShow(true);
       console.log(currentUser);
       axios
@@ -29,7 +30,7 @@ const SideBar = () => {
           console.error("Error fetching friend list:", error);
         });
     }
-  }, [currentUser]);
+  }, [currentUser,isnewMsg]);
 
   const searchHandle = async (e) => {
     setSearchTerm(e.target.value);

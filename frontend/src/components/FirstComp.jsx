@@ -180,7 +180,8 @@ ${show ? "translate-x-0 " : "translate-x-[-20%] "}`}
     >
       <div className="h-full  bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-4 bg-gradient-to-r from-white to-gray-50 border-b border-gray-200 flex items-center gap-4">
+        {!show &&(
+          <div className="p-4 bg-gradient-to-r from-white to-gray-50 border-b border-gray-200 flex items-center gap-4">
           <div className="h-14 w-14 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center">
             <span className="text-2xl font-bold uppercase text-white">T</span>
           </div>
@@ -201,6 +202,30 @@ ${show ? "translate-x-0 " : "translate-x-[-20%] "}`}
             <HiOutlineDotsVertical className="text-2xl hover:text-gray-800 transition" />
           </div>
         </div>
+        )}
+        {chatUser && (
+          <div className="p-4 bg-gradient-to-r from-white to-gray-50 border-b border-gray-200 flex items-center gap-4">
+          <div className="h-14 w-14 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center">
+            <span className="text-2xl font-bold uppercase text-white">{chatUser?.charAt(0)}</span>
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="flex items-center gap-2 text-lg font-semibold">
+              <span>{chatUser?chatUser:"Talksy"}</span>
+              <IoBookSharp className="text-xl text-gray-500" />
+            </h3>
+            <h5 className="text-green-500 text-sm font-medium">
+              {chatUser?chatUser:"Talksy"} is active
+            </h5>
+          </div>
+
+          <div className="flex items-center gap-3 justify-end ml-auto text-gray-600">
+            <MdOutlineVideoCall className="text-2xl hover:text-blue-600 transition" />
+            <IoCallOutline className="text-2xl hover:text-green-600 transition" />
+            <HiOutlineDotsVertical className="text-2xl hover:text-gray-800 transition" />
+          </div>
+        </div>
+        )}
 
         {/* Messages */}
         {!show && !chatUser && (
@@ -312,7 +337,7 @@ ${firstShow ? "translate-x-0 opacity-100" : "translate-x-[-20%] opacity-0"}`}>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-end gap-3 justify-end">
+                  <div key={i} className="flex items-end gap-3 justify-end">
                     <div className="text-xs text-gray-400 mr-3">
                       {new Date(m.timestamp).toLocaleTimeString([], {
                         hour: "2-digit",
