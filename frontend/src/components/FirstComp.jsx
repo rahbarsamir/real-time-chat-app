@@ -9,17 +9,26 @@ import io from "socket.io-client";
 import axios from "axios";
 import { useChat } from "../context/ChatContext";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-
-const socket = io("http://localhost:3001");
+const SERVER_IP='10.1.4.21'
+const socket = io(`http://${SERVER_IP}:3001`);
 
 const FirstComp = () => {
+  const [firstShow,setFirstShow]=useState(false)
   const [show, setShow] = useState(false);
   const messageContainer = useRef(null);
   const BotchatRef  = useRef(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
-  const { currentUser, setCurrentUser, chatUser, setChatUser } = useChat();
+  const { currentUser, setCurrentUser, chatUser, setChatUser,isnewMsg,setNewMsg } = useChat();
   const [visitorId, setVisitorId] = useState(null);
+
+  useEffect(()=>{
+    setTimeout(() => {
+      setFirstShow(true);
+
+    }, 1000);
+  },[])
+
   useEffect(() => {
     const loadFingerprint = async () => {
       const fp = await FingerprintJS.load();
@@ -51,11 +60,12 @@ const FirstComp = () => {
 
     useEffect(() => {
     axios
-      .get(`http://localhost:3001/messages/${currentUser}/${chatUser}`)
+      .get(`http://${SERVER_IP}:3001/messages/${currentUser}/${chatUser}`)
       .then((res) => setMessages(res.data));
   }, [chatUser, currentUser]);
 
     useEffect(() => {
+      
       socket.on("receiveMessage", (msg) => {
         if (
           (msg.sender === currentUser && msg.receiver === chatUser) ||
@@ -100,7 +110,7 @@ const FirstComp = () => {
         return;
       }
       try {
-        const res = await axios.post("http://localhost:3001/postuser", {
+        const res = await axios.post(`http://${SERVER_IP}:3001/postuser`, {
           username: entered,
           visitorId, //////////////////////////////////////////// change this
         });
@@ -203,7 +213,9 @@ ${show ? "translate-x-0 " : "translate-x-[-20%] "}`}
               {/* Show messages */}
               {Botmessages.map((m, i) =>
                 m.sender === "me" ? (
-                  <div key={i} className="flex items-end gap-3 justify-end">
+                  <div
+                  
+                   key={i} className="flex  items-end gap-3 justify-end ">
                     <div className="text-xs text-gray-400 mr-3">
                       {m.time && (
                         <div className="text-xs text-gray-400">{m.time}</div>
@@ -219,7 +231,8 @@ ${show ? "translate-x-0 " : "translate-x-[-20%] "}`}
                     </div>
                   </div>
                 ) : (
-                  <div key={i} className="flex items-start gap-3">
+                  <div key={i} className={`flex items-start gap-3 transition-transform transition-opacity duration-700 ease-out
+${firstShow ? "translate-x-0 opacity-100" : "translate-x-[-20%] opacity-0"}`}>
                     <div className="h-11 w-11 bg-green-100 b rounded-full flex items-center justify-center ">
                       <h3 className="font-semibold uppercase text-sm">T</h3>
                     </div>

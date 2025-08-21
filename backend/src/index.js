@@ -108,14 +108,35 @@ app.get("/messages/:sender/:receiver", async (req, res) => {
 
 app.get('/getFriendlist',async(req,res)=>{
   const { currentUser } = req.query;
+
+   
   if (!currentUser) {
     return res.status(400).json({ error: "Current user is required" });
   }
   try {
-    // const res=message.
-    
+      const chatList = await Message.aggregate([
+    {
+      $match: {
+        $or: [{ sender: currentUser }, { receiver: currentUser }]
+      }
+    },
+    {
+      $project: {
+        user: {
+          $cond: [
+            { $eq: ["$sender",currentUser] },
+            "$receiver",                 
+            "$sender"                   
+          ]
+        }
+      }
+    },
+    { $group: { _id: "$user" } }
+  ]);
+    res.status(200).json(chatList);
   } catch (error) {
-    
+    console.error("Error fetching friend list:", error);
+    res.status(500).json({ error: "Failed to fetch friend list" });
   }
 
 })
@@ -139,4 +160,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => console.log("Server running on http://localhost:3001"));
+server.listen(3001,"0.0.0.0", () => console.log("Server running on http://localhost:3001"));
