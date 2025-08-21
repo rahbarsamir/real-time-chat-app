@@ -1,23 +1,62 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import User from "./User";
+import {useChat} from "../context/ChatContext";
 import { useRef } from "react";
 import "../App.css";
-const SideBar = () => {
+import axios from "axios";
 
+const SideBar = () => {
+  const [show, setShow] = useState(false);
   const [isAllSelected, setIsAllSelected] = useState(true);
-  const [isSearchFocus, setIsSerachFocused] = useState(false);
+  const [isSearchFocus, setIsSearchFocused] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const searchRef = useRef();
+  const { currentUser} = useChat();
+  const [otherUser,setotherUser] = useState([]);
+  useEffect(() => {
+  
+  if(currentUser!==null){
+    setShow(true);
+    console.log(currentUser);
+  }
+}, [currentUser]);
+
+
+  const searchHandle =async (e) => {
+    setSearchTerm(e.target.value);
+    console.log(e.target.value);
+   if(e.target.value.trim() === "") {
+      // setIsSearchFocused(false);
+      setotherUser([]);
+      return;
+    }
+     try {
+      const res = await axios.get(`http://localhost:3001/search/${e.target.value}`);
+      // console.log(res.data);
+      setotherUser(res.data);
+    } catch (error) {
+      console.error("Error searching users:", error);
+    }
+
+  };
+
   return (
-    <div className="bg-[#FFFFFF] overflow-hidden w-[29%] a h-full rounded-3xl  p-5">
+    <div 
+    // className="bg-[#FFFFFF]  overflow-hidden w-[29%] a h-full rounded-3xl  p-5"
+    className={`bg-[#FFFFFF] relative overflow-hidden w-[29%] a h-full rounded-3xl  p-5 transition-transform transition-opacity duration-1200 ease-in-out
+${show ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`}
+>
+    
+    
       {/* userData */}
       <div className="flex justify-between items-center gap-2">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-blue-300 flex justify-center items-center">
-            <h1 className="font-bold text-2xl uppercase self-center">R</h1>
+            <h1 className="font-bold text-2xl uppercase self-center">{currentUser?.charAt(0)}</h1>
           </div>
           <div>
-            <h1 className="font-sans font-medium capitalize">Rahbar samir</h1>
+            <h1 className="font-sans font-medium capitalize">{currentUser}</h1>
           </div>
         </div>
         <button
@@ -25,10 +64,12 @@ const SideBar = () => {
         >
           <div className="relative">
             <input
+              value={searchTerm}
+              onChange={searchHandle}
               ref={searchRef}
               type="text"
-              onFocus={()=>setIsSerachFocused(true)}
-              onBlur={()=>setIsSerachFocused(false)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               placeholder="Search Username"
               className="bg-white rounded-full px-3 focus:py-1 z-5 outline-none w-0  transition-all duration-100 focus:w-40"
             />
@@ -66,10 +107,16 @@ const SideBar = () => {
       {/* usersFiled */}
 
       <div className="overflow-y-scroll mt-10 h-[75%]">
-        <User username={"sam"}  />
-        <User username={"anas"} />
+        {/* <User username={"sam"}  />
+        <User username={"anas"} /> */}
+    {  otherUser.map((user, index) => (
+        <User key={index} username={user.username} />
+      ))}
+
       </div>
     </div>
+    
+            
   );
 };
 
