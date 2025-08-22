@@ -29,14 +29,45 @@ const FirstComp = () => {
     }, 1000);
   },[])
 
+  useEffect(()=>{
+    const verifyToken=async()=>{
+      try {
+        const res = await axios.post(`http://${SERVER_IP}:3001/tokenIsValid`,
+          {Headers:{
+            token:
+          }
+          }
+        );
+        if (res.status === 200) {
+          setCurrentUser(res.data.username);
+        }
+      } catch (error) {
+        
+      }
+    }
+    try {
+      const token=localStorage.getItem("token");
+      if(token){
+        verifyToken();
+      }
+    } catch (error) {
+      console.log("No token found");
+    }
+  
+  },[])
+
   useEffect(() => {
     const loadFingerprint = async () => {
       const fp = await FingerprintJS.load();
       const result = await fp.get();
       setVisitorId(result.visitorId);
+      // console.log(result.visitorId)
+
     };
     loadFingerprint();
   }, []);
+
+
   useEffect(() => {
     if (currentUser !== null) {
       setShow(true);
@@ -65,8 +96,9 @@ const FirstComp = () => {
   }, [chatUser, currentUser]);
 
     useEffect(() => {
-      
+     
       socket.on("receiveMessage", (msg) => {
+         setNewMsg((prev)=>(!prev));
         if (
           (msg.sender === currentUser && msg.receiver === chatUser) ||
           (msg.sender === chatUser && msg.receiver === currentUser)
@@ -118,8 +150,10 @@ const FirstComp = () => {
         if (res.status == 201) {
           console.log("User created successfully:", res.data.username);
           setCurrentUser(res.data.username); //todo
+          console.log(res.data.token)
+          localStorage.setItem("token", res.data.token);
         }
-        console.log(res);
+        // console.log(res);
         setUsername(entered);
       } catch (error) {
         console.error("Error creating user:", error.response.data.error);

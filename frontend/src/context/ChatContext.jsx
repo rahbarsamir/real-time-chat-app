@@ -9,7 +9,7 @@ const ChatProvider = ({ children }) => {
 
   return (
     <ChatContext.Provider
-      value={{ currentUser, setCurrentUser, chatUser, setChatUser,isnewMsg}}
+      value={{ currentUser, setCurrentUser, chatUser, setChatUser,isnewMsg,setNewMsg }}
     >
       {children}
     </ChatContext.Provider>

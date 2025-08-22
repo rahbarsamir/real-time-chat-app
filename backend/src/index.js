@@ -6,6 +6,7 @@ import cors from "cors";
 import User from "./model/userModel.js";
 import Message from "./model/MessageModel.js";
 import { connectDB } from "./db/connect.js";
+import jwt from "jsonwebtoken";
 
 const app = express();
 const server = createServer(app);
@@ -13,7 +14,7 @@ const io = new Server(server, { cors: { origin: "*" } });
 app.use(urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
-
+const SECRET_KEY = "yophcdibpdjbuwpouy76675869uvknvjgvljbvogf";
 connectDB();
 
 app.get("/", (req, res) => {
@@ -22,6 +23,18 @@ app.get("/", (req, res) => {
 
 
 
+// 
+
+const generateToken=(user)=>{
+  const token = jwt.sign({ id: user._id ,username:user.username},SECRET_KEY, { expiresIn: "1y" });
+  return token;
+}
+
+
+app.post("/tokenIsValid", async (req, res) => {
+  const token=req.headers.token;
+  console.log(token)
+})
 
 // create User or login
 app.post("/postuser", async (req, res) => {
@@ -45,7 +58,10 @@ try {
   }
 
   const newUser = await User.create({ username, visitorId });
-  res.status(201).json(newUser);
+  
+  const token=generateToken(newUser)
+
+  res.status(201).json({ user: newUser, token });
 } catch (error) {
   console.error("Error creating user:", error);
   res.status(500).json({ error: "Failed to create user" });

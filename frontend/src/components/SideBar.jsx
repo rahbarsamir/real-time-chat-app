@@ -10,6 +10,7 @@ const SideBar = () => {
   const [show, setShow] = useState(false);
   const [isAllSelected, setIsAllSelected] = useState(true);
   const [isSearchFocus, setIsSearchFocused] = useState(false);
+  const [issearchvalueclick,setissearchvalueclick] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const searchRef = useRef();
   const { currentUser,isnewMsg } = useChat();
@@ -34,7 +35,7 @@ const SideBar = () => {
 
   const searchHandle = async (e) => {
     setSearchTerm(e.target.value);
-    console.log(e.target.value);
+    // console.log(e.target.value);
     if (e.target.value.trim() === "") {
       // setIsSearchFocused(false);
       setSearchUsers([]);
@@ -76,7 +77,7 @@ ${show ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`}
               onChange={searchHandle}
               ref={searchRef}
               type="text"
-              onFocus={() => setIsSearchFocused(true)}
+              onFocus={() => (setIsSearchFocused(true),setissearchvalueclick(false))}
               onBlur={() => setIsSearchFocused(false)}
               placeholder="Search Username"
               className="bg-white rounded-full px-3 focus:py-1 z-5 outline-none w-0  transition-all duration-100 focus:w-40"
@@ -90,17 +91,19 @@ ${show ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}`}
           </div>
         </button>
       </div>
-      <div>
+      {!issearchvalueclick && (
+        <div>
         <div className="relative z-10 bg-white border border-gray-200 rounded-md shadow-md mt-2 w-full">
           {searchUsers.map((user, index) => (
-            <User
-              onClick={() => console.log(user.username)}
+           (user.username!==currentUser && (<User
+              changeBgColor={setissearchvalueclick}
               key={index}
               username={user.username}
-            />
+            />)) 
           ))}
         </div>
       </div>
+      )}
 
       {/* filterBtn */}
 

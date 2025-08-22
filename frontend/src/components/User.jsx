@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import "../App.css";
 import { useChat } from '../context/ChatContext';
-const User = ({username}) => {
+const User = ({username,changeBgColor}) => {
     const [isActive, setIsActive] = useState(true)
     const { setChatUser, chatUser,setCurrentUser } = useChat();
     const [bgcolor,setbgcolor] = useState(getRandomLightColor())
@@ -13,7 +13,7 @@ const User = ({username}) => {
   }
   return (
     <div
-      onClick={() => setChatUser(username)}
+      onClick={() => (setChatUser(username), changeBgColor(true))}
       className="flex cursor-pointer hover:scale-101 mb-5 justify-between items-center gap-2"
     >
       <div className="flex items-center gap-3">
